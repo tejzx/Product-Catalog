@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Haven - Product Catalog</title>
+    <style>
+        :root {
+            --primary-color: #131921;
+            --secondary-color: #232f3e;
+            --text-color: #333;
+            --bg-color: #f4f4f4;
+            --card-bg: #fff;
+            --button-color: #f0c14b;
+            --button-hover: #ddb347;
+        }
+
+        .dark-mode {
+            --primary-color: #1a1a1a;
+            --secondary-color: #2a2a2a;
+            --text-color: #f4f4f4;
+            --bg-color: #121212;
+            --card-bg: #2a2a2a;
+            --button-color: #4a4a4a;
+            --button-hover: #5a5a5a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .cart-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .total-cost {
+            font-weight: bold;
+        }
+
+        .mode-toggle {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background-color: #fff;
+            padding: 1rem;
+            cursor: pointer;
+        }
+
+        .product-info {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-title {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.75rem;
+            flex-grow: 1;
+        }
+
+        .dark-mode .product-description {
+            color: #aaa;
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #b12704;
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart {
+            background-color: var(--button-color);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .add-to-cart:hover {
+            background-color: var(--button-hover);
+        }
+
+        .checkout-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .checkout-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: none;
+        }
+
+        .checkout-btn:hover {
+            background-color: #218838;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+
+        .order-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1001;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .order-notification h2 {
+            margin-bottom: 1rem;
+            color: #28a745;
+        }
+
+        .order-notification p {
+            margin-bottom: 0.5rem;
+        }
+
+        .order-id {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #007bff;
+            margin: 1rem 0;
+        }
+
+        .close-notification {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .canvas-content {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow: auto;
+        }
+
+        .close-canvas {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Tech Haven</div>
+        <div class="cart-info">
+            <div class="total-cost">Total: $0.00</div>
+            <button class="mode-toggle" id="modeToggle">Dark Mode</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="products-grid" id="productsGrid"></div>
+        <div class="checkout-container">
+            <button class="checkout-btn" id="checkoutBtn">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        Product added to cart!
+    </div>
+
+    <div class="order-notification" id="orderNotification">
+        <h2>Order Placed Successfully!</h2>
+        <p>Thank you for your purchase.</p>
+        <p>Your order ID is:</p>
+        <div class="order-id" id="orderId"></div>
+        <p>We'll send you a confirmation email shortly.</p>
+        <button class="close-notification" id="closeNotification">Continue Shopping</button>
+    </div>
+
+    <div class="canvas-container" id="canvasContainer">
+        <button class="close-canvas" id="closeCanvas">Close</button>
+        <div class="canvas-content">
+            <canvas id="productCanvas" width="500" height="400"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Product data array with working images and descriptions
+        const products = [
+            {
+                id: 1,
+                title: "MacBook Pro 14\"",
+                price: 1999.99,
+                image: "https://m.media-amazon.com/images/I/61aUBxqc5PL._AC_SL1500_.jpg",
+                description: "Apple M2 Pro chip, 16GB RAM, 512GB SSD. Stunning Liquid Retina XDR display."
+            },
+            {
+                id: 2,
+                title: "Dell XPS 15",
+                price: 1499.99,
+                image: "https://imgs.search.brave.com/wYVlPtECkBuv-RI72dhO7HHI9THshRCOYYQOtZaVkQ8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/ODFyc29BTm03dEwu/anBn",
+                description: "15.6\" 4K UHD+ display, Intel Core i7, 16GB RAM, 512GB SSD. InfinityEdge touchscreen."
+            },
+            {
+                id: 3,
+                title: "iPhone 15 Pro",
+                price: 999.00,
+                image: "https://m.media-amazon.com/images/I/81Os1SDWpcL._AC_SL1500_.jpg",
+                description: "6.1\" Super Retina XDR display, A17 Pro chip, 128GB storage. Titanium design."
+            },
+            {
+                id: 4,
+                title: "Samsung Galaxy S23 Ultra",
+                price: 1199.99,
+                image: "https://imgs.search.brave.com/3Lq4LrsFBCfPRY74ibTThoog9GboouEetqCL8s7YBVI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NDFHQW51WTItREwu/anBn",
+                description: "6.8\" Dynamic AMOLED, Snapdragon 8 Gen 2, 256GB, 200MP camera with S Pen included."
+            },
+            {
+                id: 5,
+                title: "Sony WH-1000XM5 Headphones",
+                price: 399.99,
+                image: "https://m.media-amazon.com/images/I/51QxA-98Q+L._AC_SL1500_.jpg",
+                description: "Industry-leading noise cancellation, 30-hour battery, crystal clear hands-free calling."
+            },
+            {
+                id: 6,
+                title: "Apple Watch Series 9",
+                price: 399.00,
+                image: "https://imgs.search.brave.com/Z5nFY7j7og-kgU1Li2eBS7jBNV5ARVn_SOVj-fD6V1E/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/YXBwbGUuY29tL3Yv/d2F0Y2gvYnEvaW1h/Z2VzL292ZXJ2aWV3/L2NvbnNpZGVyX21v/ZGFscy9oZWFsdGgv/bW9kYWxfaGVhbHRo/X3NsZWVwX19jN2ti/czhkbXB0dzJfeGxh/cmdlLmpwZw",
+                description: "45mm GPS, Starlight Aluminum Case, Midnight Sport Band. S9 SiP chip, 18-hour battery."
+            },
+            {
+                id: 7,
+                title: "iPad Pro 12.9\"",
+                price: 1099.00,
+                image: "https://imgs.search.brave.com/u0p2Rg0eQWvxNkMwURIVjY_nPVfzcvRPcfSqYrSqA_Y/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/NTFNWjBJaHBjNFMu/anBn",
+                description: "M2 chip, Liquid Retina XDR display, 128GB, Wi-Fi 6E. Pro camera system."
+            },
+            {
+                id: 8,
+                title: "Bose QuietComfort 45",
+                price: 329.00,
+                image: "https://imgs.search.brave.com/LswxeN7ILxH6i4jiZclFQOSSuJ3f4xBDtbyb2Z6YckI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL0kv/MzFnWG5vZ0J4a0wu/anBn",
+                description: "World-class noise cancellation, 24-hour battery, comfortable over-ear design."
+            },
+            {
+                id: 9,
+                title: "Logitech MX Master 3S",
+                price: 99.99,
+                image: "https://imgs.search.brave.com/XdLOQPmgmHwEvh2QbPSGZwZTW0RkkE9jgxk2Ydvi-Qc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tLm1l/ZGlhLWFtYXpvbi5j/b20vaW1hZ2VzL1Mv/YXBsdXMtbWVkaWEt/bGlicmFyeS1zZXJ2/aWNlLW1lZGlhLzRh/YWYyODQ0LTZhMTMt/NGU3YS04MjAzLTkw/MTEyMzVlYWViZi5f/X0NSMCwwLDk3MCwz/MDBfUFQwX1NYOTcw/X1YxX19fLmpwZw",
+                description: "Advanced ergonomic mouse, 8K DPI, ultra-quiet clicks, multi-device flow."
+            },
+            {
+                id: 10,
+                title: "Samsung 34\" Curved Monitor",
+                price: 399.99,
+                image: "https://imgs.search.brave.com/WQAYa8tGIEIyVYmO26HRemv5ZjkB2ZrzJhXMFzXe76I/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZS11cy5zYW1zdW5n/LmNvbS9TYW1zdW5n/VVMvaG9tZS9jb21w/dXRpbmcvbW9uaXRv/cnMvdWhkLWFuZC13/cWhkLzEwMTAyMDI0/L1BEUEdhbGxlcnlJ/bWFnZV9MUzM0REc4/NTZTTlhaQS0wMS5q/cGc_JHByb2R1Y3Qt/ZGV0YWlscy1qcGck",
+                description: "Ultra WQHD 3440x1440, 100Hz, AMD FreeSync, 3000:1 contrast ratio."
+            }
+        ];
+
+        // Cart functionality
+        let cart = [];
+        let totalCost = 0;
+
+        // DOM elements
+        const productsGrid = document.getElementById('productsGrid');
+        const notification = document.getElementById('notification');
+        const totalCostElement = document.querySelector('.total-cost');
+        const modeToggle = document.getElementById('modeToggle');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const closeCanvas = document.getElementById('closeCanvas');
+        const productCanvas = document.getElementById('productCanvas');
+        const ctx = productCanvas.getContext('2d');
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        const orderNotification = document.getElementById('orderNotification');
+        const orderIdElement = document.getElementById('orderId');
+        const closeNotification = document.getElementById('closeNotification');
+
+        // Render products
+        function renderProducts() {
+            productsGrid.innerHTML = '';
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.title}" class="product-image" data-id="${product.id}">
+                    <div class="product-info">
+                        <h3 class="product-title">${product.title}</h3>
+                        <div class="product-description">${product.description}</div>
+                        <div class="product-price">$${product.price.toFixed(2)}</div>
+                        <button class="add-to-cart" data-id="${product.id}">Add to Cart</button>
+                    </div>
+                `;
+                productsGrid.appendChild(productCard);
+            });
+
+            // Add event listeners to all Add to Cart buttons
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', addToCart);
+            });
+
+            // Add event listeners to all product images for canvas display
+            document.querySelectorAll('.product-image').forEach(image => {
+                image.addEventListener('click', showProductCanvas);
+            });
+        }
+
+        // Add to cart function
+        function addToCart(e) {
+            const productId = parseInt(e.target.getAttribute('data-id'));
+            const product = products.find(p => p.id === productId);
+            
+            if (product) {
+                cart.push(product);
+                totalCost += product.price;
+                updateCartTotal();
+                showNotification();
+                checkoutBtn.style.display = 'block';
+            }
+        }
+
+        // Update cart total
+        function updateCartTotal() {
+            totalCostElement.textContent = `Total: $${totalCost.toFixed(2)}`;
+        }
+
+        // Show notification
+        function showNotification() {
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 2000);
+        }
+
+        // Generate random order ID
+        function generateOrderId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 10; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Place order function
+        function placeOrder() {
+            if (cart.length === 0) {
+                alert('Your cart is empty. Please add some products before checkout.');
+                return;
+            }
+
+            // Generate order ID
+            const orderId = generateOrderId();
+            orderIdElement.textContent = orderId;
+            
+            // Show order confirmation
+            orderNotification.style.display = 'flex';
+            
+            // Reset cart
+            cart = [];
+            totalCost = 0;
+            updateCartTotal();
+            checkoutBtn.style.display = 'none';
+        }
+
+        // Close order notification
+        function closeOrderNotification() {
+            orderNotification.style.display = 'none';
+        }
+
+        // Dark mode toggle
+        modeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                modeToggle.textContent = 'Light Mode';
+            } else {
+                modeToggle.textContent = 'Dark Mode';
+            }
+        });
+
+        // Show product canvas
+        function showProductCanvas(e) {
+            const productId = parseInt(e.target.getAttribute('data-id'));
+            const product = products.find(p => p.id === productId);
+            
+            if (product) {
+                canvasContainer.style.display = 'flex';
+                drawProductDetails(product);
+            }
+        }
+
+        // Draw product details on canvas
+        function drawProductDetails(product) {
+            // Clear canvas
+            ctx.clearRect(0, 0, productCanvas.width, productCanvas.height);
+            
+            // Set styles
+            ctx.fillStyle = document.body.classList.contains('dark-mode') ? '#f4f4f4' : '#333';
+            ctx.strokeStyle = document.body.classList.contains('dark-mode') ? '#f4f4f4' : '#333';
+            ctx.lineWidth = 2;
+            ctx.font = '16px Arial';
+            
+            // Draw title
+            ctx.fillText(`Product: ${product.title}`, 20, 30);
+            
+            // Draw price
+            ctx.fillText(`Price: $${product.price.toFixed(2)}`, 20, 60);
+            
+            // Draw description
+            ctx.fillText(`Description: ${product.description}`, 20, 90);
+            
+            // Draw shapes representing product features
+            // Rectangle representing the product
+            ctx.strokeRect(50, 120, 400, 200);
+            ctx.fillText("Product Outline", 200, 340);
+            
+            // Circles representing features
+            ctx.beginPath();
+            ctx.arc(100, 170, 30, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillText("Feature 1", 70, 220);
+            
+            ctx.beginPath();
+            ctx.arc(250, 170, 30, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillText("Feature 2", 220, 220);
+            
+            ctx.beginPath();
+            ctx.arc(400, 170, 30, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillText("Feature 3", 370, 220);
+            
+            // Line showing dimensions
+            ctx.beginPath();
+            ctx.moveTo(50, 370);
+            ctx.lineTo(450, 370);
+            ctx.stroke();
+            ctx.fillText("Product Dimensions", 200, 390);
+        }
+
+        // Close canvas
+        closeCanvas.addEventListener('click', () => {
+            canvasContainer.style.display = 'none';
+        });
+
+        // Event listeners
+        checkoutBtn.addEventListener('click', placeOrder);
+        closeNotification.addEventListener('click', closeOrderNotification);
+
+        // Initialize the page
+        renderProducts();
+    </script>
+</body>
+</html>
