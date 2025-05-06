@@ -58,4 +58,4 @@ Want to add your own products? Modify the product list in the JavaScript section
 This project is licensed under the **MIT License** — free for personal and commercial use.
 ---
 ## 📬 Contact
-Have questions or suggestions? Reach out via email: **\reachteju10@gmail.com**
+Have questions or suggestions? Reach out via email: **reachteju10@gmail.com**
